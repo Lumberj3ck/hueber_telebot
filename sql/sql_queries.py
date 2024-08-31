@@ -59,7 +59,7 @@ def get_audios_by_lecture_id(db_path, lecture_id):
     cursor, conn = get_cursor(db_path)
 
     query = '''
-    SELECT a.id, a.path, l.id, b.name, a.number, a.title  FROM audio a
+    SELECT a.id, a.path, l.id, b.name, a.number, a.title, l.number, l.content_type  FROM audio a
     JOIN lecture l ON a.lecture_id = l.id
     JOIN book b ON l.content_id = b.id
     WHERE l.id = ?
