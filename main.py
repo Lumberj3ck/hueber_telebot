@@ -11,39 +11,7 @@ api_token = os.getenv('API_TOKEN')
 bot = telebot.TeleBot(api_token)
 db_name = os.getenv('DB')
 
-audio_data = {
-    1: [
-        {"exercise": "Exercise 1.1", "audio": "/audio11"},
-        {"exercise": "Exercise 1.2", "audio": "/audio12"},
-        {"exercise": "Exercise 1.3", "audio": "/audio13"},
-    ],
-    2: [
-        {"exercise": "Exercise 2.1", "audio": "/audio21"},
-        {"exercise": "Exercise 2.2", "audio": "/audio22"},
-    ],
-    3: [
-        {"exercise": "Exercise 3.1", "audio": "/audio31"},
-        {"exercise": "Exercise 3.2", "audio": "/audio32"},
-        {"exercise": "Exercise 3.3", "audio": "/audio33"},
-    ],
-}
-
-def create_page_markup(current_page):
-    markup = InlineKeyboardMarkup()
-    page_buttons = []
-    for page in range(1, len(audio_data) + 1):
-        if page == current_page:
-            page_buttons.append(InlineKeyboardButton(f"[{page}]", callback_data=f"page_{page}"))
-        else:
-            page_buttons.append(InlineKeyboardButton(str(page), callback_data=f"page_{page}"))
-    markup.row(*page_buttons)
-    return markup
-
-def generate_page_content(page):
-    content = f"Schritte plus neu A1.1\nPage {page}\n\n"
-    for item in audio_data[page]:
-        content += f"{item['exercise']}\nAudio --> {item['audio']}\n\n"
-    return content
+file_ids = {}
 
 def generate_books_page():
     content = ''
@@ -87,7 +55,6 @@ def start(message):
     # bot.send_message(message.chat.id, content, reply_markup=markup)
     bot.send_message(message.chat.id, content)
 
-file_ids = {}
 
 @bot.message_handler(func=lambda message: message.text.startswith('/book'))
 def get_lectures_for_book(message):
@@ -98,12 +65,6 @@ def get_lectures_for_book(message):
         bot.reply_to(message, content)
     else:
         bot.reply_to(message, f"Didn't find lectures for given book id")
-    # if audio_id in file_ids:
-    #     bot.send_audio(chat_id=message.chat.id, audio=file_ids[audio_id])
-    # else:
-    #     sent_audio = bot.send_audio(chat_id=message.chat.id, audio=open("301081_AB_L02_13.mp3", "rb"))
-    #     file_ids[audio_id] = sent_audio.audio.file_id
-    #     print(sent_audio)
 
 @bot.message_handler(func=lambda message: message.text.startswith('/lecture'))
 def get_lectures_for_book(message):
