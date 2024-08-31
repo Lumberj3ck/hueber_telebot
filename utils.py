@@ -3,6 +3,7 @@ from sql import sql_queries
 from dotenv import load_dotenv
 
 load_dotenv()    
+ITEMS_PER_PAGE = 5
 db_name = os.getenv('DB')
 
 def generate_books_page():
@@ -12,21 +13,29 @@ def generate_books_page():
         content += f'{book[0]}  {book[1]} \n /book{book[0]} \n'
     return content
 
-def generate_lectures_page(book_id):
-    lectures = sql_queries.get_lectures_by_book_id(db_name, book_id)
-    first_workbook = True
-    if lectures:
-        content = f'{lectures[0][2]} \n\n'
-        for lecture in lectures:
-            if first_workbook and lecture[3] == "workbook":
-                content += "Workbook Lectures \n\n" 
-                first_workbook = False
-            content += f"Lecture 0{lecture[1]} \n /lecture{lecture[0]} \n\n"
-        return content
+def generate_lectures_page(book_id, page, current_page_type):
+    if current_page_type == 'workbook':
+        lectures = sql_queries.get_workbook_lectures_by_book_id(db_name, book_id)
     else:
-        return None
+        lectures = sql_queries.get_lectures_by_book_id(db_name, book_id)
 
-ITEMS_PER_PAGE = 5
+    # first_workbook = True
+    if lectures:
+        total_pages = (len(lectures) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE
+        start_idx = (page - 1) * ITEMS_PER_PAGE
+        end_idx = start_idx + ITEMS_PER_PAGE
+        page_lectures = lectures[start_idx:end_idx]
+
+        content = f'{current_page_type.capitalize()} {lectures[0][2]} (Page {page}/{total_pages}) \n\n'
+        for lecture in page_lectures:
+            # if first_workbook and lecture[3] == "workbook":
+            #     content += "Workbook Lectures \n\n" 
+            #     first_workbook = False
+            content += f"Lecture 0{lecture[1]} \n /lecture{lecture[0]} \n\n"
+        return content, total_pages
+    else:
+        return None, 0
+
 
 def generate_audio_page(lecture_id, page):
     audios = sql_queries.get_audios_by_lecture_id(db_name, lecture_id)

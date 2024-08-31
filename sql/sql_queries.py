@@ -32,6 +32,28 @@ def get_lectures_by_book_name(db_path, book_name):
 
     return lectures
 
+def get_workbook_lectures_by_book_id(db_path, book_id):
+
+    cursor, conn = get_cursor(db_path)
+
+    query = '''
+    SELECT l.id, l.number, b.name, l.content_type AS book_name
+    FROM lecture l
+    JOIN book b ON l.content_id = b.id
+    WHERE l.content_type = 'workbook' AND b.id = ?
+    ORDER BY l.number
+    '''
+
+    cursor.execute(query, (book_id, ))
+
+    # Fetch all the results
+    lectures = cursor.fetchall()
+
+    # Close the database connection
+    conn.close()
+
+    return lectures
+
 def get_lectures_by_book_id(db_path, book_id):
 
     cursor, conn = get_cursor(db_path)
@@ -40,8 +62,8 @@ def get_lectures_by_book_id(db_path, book_id):
     SELECT l.id, l.number, b.name, l.content_type AS book_name
     FROM lecture l
     JOIN book b ON l.content_id = b.id
-    WHERE b.id = ?
-    ORDER BY l.content_type, l.number
+    WHERE l.content_type = 'book' AND b.id = ?
+    ORDER BY l.number
     '''
 
     cursor.execute(query, (book_id, ))
