@@ -47,14 +47,6 @@ def handle_audio(message):
     else:
         bot.reply_to(message, f"Didn't find audio for id: {audio_id}")
 
-# @bot.message_handler(func=lambda message: message.text.startswith('/lecture'))
-# def get_lectures_for_book(message):
-#     lecture_id = message.text[8:]  # Extract the audio ID from the command
-#     content = generate_audio_page(lecture_id)
-#     if content:
-#         bot.reply_to(message, content)
-#     else:
-#         bot.reply_to(message, f"Didn't find audious for given lecture")
 
 @bot.message_handler(func=lambda message: message.text.startswith('/lecture'))
 def get_lectures_for_book(message):

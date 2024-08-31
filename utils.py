@@ -26,18 +26,6 @@ def generate_lectures_page(book_id):
     else:
         return None
 
-# def generate_audio_page(lecture_id):
-#     audios = sql_queries.get_audios_by_lecture_id(db_name, lecture_id)
-#     if audios:
-#         content = f'Lecture {audios[0][2]} from {audios[0][3]} \n\n'
-#         for audio in audios:
-#             # don't need audio path
-#             # content += f"Audio 0{audio[4]} \n /audio{audio[0]} \n\n"
-#             content += f"{audio[5]} \n /audio{audio[0]} \n\n"
-#         return content
-#     else:
-#         return None
-        
 ITEMS_PER_PAGE = 5
 
 def generate_audio_page(lecture_id, page):
