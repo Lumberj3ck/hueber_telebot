@@ -2,3 +2,5 @@ venv
 audio_files
 
 **/__pycache__/
+
+.env
