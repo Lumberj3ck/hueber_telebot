@@ -2,49 +2,16 @@ import os
 import telebot
 from dotenv import load_dotenv
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from sql import sql_queries
+from utils import *
 
 load_dotenv()    
 
 api_token = os.getenv('API_TOKEN')
 
 bot = telebot.TeleBot(api_token)
-db_name = os.getenv('DB')
 
 file_ids = {}
 
-def generate_books_page():
-    content = ''
-    books = sql_queries.get_all_books(db_name)
-    for book in books:
-        content += f'{book[0]}  {book[1]} \n /book{book[0]} \n'
-    return content
-
-def generate_lectures_page(book_id):
-    lectures = sql_queries.get_lectures_by_book_id(db_name, book_id)
-    first_workbook = True
-    if lectures:
-        content = f'{lectures[0][2]} \n\n'
-        for lecture in lectures:
-            if first_workbook and lecture[3] == "workbook":
-                content += "Workbook Lectures \n\n" 
-                first_workbook = False
-            content += f"Lecture 0{lecture[1]} \n /lecture{lecture[0]} \n\n"
-        return content
-    else:
-        return None
-
-def generate_audio_page(lecture_id):
-    audios = sql_queries.get_audios_by_lecture_id(db_name, lecture_id)
-    if audios:
-        content = f'Lecture {audios[0][2]} from {audios[0][3]} \n\n'
-        for audio in audios:
-            # don't need audio path
-            # content += f"Audio 0{audio[4]} \n /audio{audio[0]} \n\n"
-            content += f"{audio[5]} \n /audio{audio[0]} \n\n"
-        return content
-    else:
-        return None
         
 
 @bot.message_handler(commands=['start'])
@@ -90,15 +57,15 @@ def handle_audio(message):
     else:
         bot.reply_to(message, f"Didn't find audio for id: {audio_id}")
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('page_'))
-def callback_query(call):
-    page = int(call.data.split('_')[1])
-    content = generate_page_content(page)
-    markup = create_page_markup(page)
-    bot.edit_message_text(chat_id=call.message.chat.id,
-                          message_id=call.message.message_id,
-                          text=content,
-                          reply_markup=markup)
-    bot.answer_callback_query(call.id)
+# @bot.callback_query_handler(func=lambda call: call.data.startswith('page_'))
+# def callback_query(call):
+#     page = int(call.data.split('_')[1])
+#     content = generate_page_content(page)
+#     markup = create_page_markup(page)
+#     bot.edit_message_text(chat_id=call.message.chat.id,
+#                           message_id=call.message.message_id,
+#                           text=content,
+#                           reply_markup=markup)
+#     bot.answer_callback_query(call.id)
 
 bot.polling()
