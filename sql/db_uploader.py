@@ -1,14 +1,34 @@
 import os
 import re
 import sqlite3
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3
 
-def extract_info_from_filename(filename):
+def get_mp3_title(file_path):
+    try:
+        # Load the MP3 file
+        audio = MP3(file_path, ID3=ID3)
+        
+        # Check if the file has an ID3 tag
+        if audio.tags:
+            # Try to get the title from the ID3 tag
+            title = audio.tags.get('TIT2')
+            if title:
+                return title.text[0]
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def extract_info_from_filename(filename, directory):
     pattern = r'(\d+)_(\w+)?_L(\d+)_(\d+)\.mp3'
     match = re.match(pattern, filename)
     if match:
         book_id, book_type, lecture_number, audio_number = match.groups()
+        path_to_file = os.path.join(directory, filename)
+        title = get_mp3_title(path_to_file)
         return {
             'book_id': int(book_id),
+            'title': title, 
             'content_type': 'workbook' if book_type == "AB" else 'book',
             'lecture_number': int(lecture_number),
             'path': filename,
@@ -57,8 +77,8 @@ def insert_data(conn, data):
 
     if not audio:
         cursor.execute('''
-            INSERT INTO audio (path, lecture_id, number) VALUES (?, ?, ?)
-        ''', (data['path'], lecture_id, data['audio_number']))
+            INSERT INTO audio (path, lecture_id, number, title) VALUES (?, ?, ?, ?)
+        ''', (data['path'], lecture_id, data['audio_number'], data['title']))
 
     conn.commit()
 
@@ -67,7 +87,7 @@ def process_files(directory, book_name, db_path):
 
     for filename in os.listdir(directory):
         if filename.endswith('.mp3'):
-            data = extract_info_from_filename(filename)
+            data = extract_info_from_filename(filename, directory)
             if data:
                 data['book_name'] = book_name
                 insert_data(conn, data)

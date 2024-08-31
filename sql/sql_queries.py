@@ -37,11 +37,11 @@ def get_lectures_by_book_id(db_path, book_id):
     cursor, conn = get_cursor(db_path)
 
     query = '''
-    SELECT l.id, l.number, b.name AS book_name
+    SELECT l.id, l.number, b.name, l.content_type AS book_name
     FROM lecture l
     JOIN book b ON l.content_id = b.id
-    WHERE l.content_type = 'book' AND b.id = ?
-    ORDER BY l.number
+    WHERE b.id = ?
+    ORDER BY l.content_type, l.number
     '''
 
     cursor.execute(query, (book_id, ))
@@ -59,7 +59,7 @@ def get_audios_by_lecture_id(db_path, lecture_id):
     cursor, conn = get_cursor(db_path)
 
     query = '''
-    SELECT a.id, a.path, l.id, b.name, a.number  FROM audio a
+    SELECT a.id, a.path, l.id, b.name, a.number, a.title  FROM audio a
     JOIN lecture l ON a.lecture_id = l.id
     JOIN book b ON l.content_id = b.id
     WHERE l.id = ?

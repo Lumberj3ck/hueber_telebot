@@ -1,26 +1,19 @@
-import argparse
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3
 
+def get_mp3_title(file_path):
+    try:
+        # Load the MP3 file
+        audio = MP3(file_path, ID3=ID3)
+        
+        # Check if the file has an ID3 tag
+        if audio.tags:
+            # Try to get the title from the ID3 tag
+            title = audio.tags.get('TIT2')
+            if title:
+                return title.text[0]
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
-
-parser = argparse.ArgumentParser(description="Count word occurrences in a text.")
-parser.add_argument("text", help="The text to analyze")
-parser.add_argument("-n", "--top-n", type=int, default=10, help="Show only the top N most common words")
-
-# py test1.py "asdfljl"
-
-args = parser.parse_args()
-
-
-# result = word_conunt(args.text)
-# writing(result)
-
-
-
-def writing(result, n):
-    freq = list(result.items())
-
-    for j in freq[:n]:
-        print(j)
-
-
-writing({"a": 1, "b": 2, "c": 9138459}, args.top_n)
+print(get_mp3_title(r"C:\Users\Lumberjack\code\hueber_telebot\audio_files\Schritte_plus_neu_a1.1\301081_AB_L01_01.mp3"))

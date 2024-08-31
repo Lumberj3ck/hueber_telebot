@@ -14,6 +14,7 @@ CREATE TABLE lecture (
 
 CREATE TABLE audio (
     id INTEGER PRIMARY KEY,
+    title VARCHAR,
     path VARCHAR(255) NOT NULL,
     number INTEGER NOT NULL,
     lecture_id INTEGER,

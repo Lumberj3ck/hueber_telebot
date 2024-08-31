@@ -31,6 +31,60 @@ You can replace first batery for free
 
 And charge the batery at our points
 
+Book message
+
+Workbook Lectures 
+Lecture 01 
+ /lecture1 
+
+Lecture 02 
+ /lecture2 
+
+Lecture 03 
+ /lecture3 
+
+Lecture 04 
+ /lecture4 
+
+Lecture 05 
+ /lecture5 
+
+Lecture 06 
+ /lecture6 
+
+Lecture 07 
+ /lecture7
+
+[kurs book audio]
+[1] [2] [3] [4]
+
+
+/lecture1
+
+Lecture 1 from Schritte_plus_neu_a1.1 
+
+Lektion 1, Schritt A, 1 
+ /audio1 
+
+Lektion 1, Schritt A, 2 
+ /audio2 
+
+Lektion 1, Schritt B, 5 
+ /audio3 
+
+Lektion 1, Schritt B, 6 
+ /audio4 
+
+Lektion 1, Schritt C, 15 
+ /audio5 
+
+Lektion 1, Schritt D, 20 
+ /audio6 
+
+Lektion 1, Schritt D, 21, a 
+ /audio7 
+[1] [2] [3] [4]
+
 
 message:
 
