@@ -22,15 +22,6 @@ def start(message):
     bot.send_message(message.chat.id, content)
 
 
-@bot.message_handler(func=lambda message: message.text.startswith('/book'))
-def get_lectures_for_book(message):
-    book_id = message.text[5:]  # Extract the audio ID from the command
-    content = generate_lectures_page(book_id)
-
-    if content:
-        bot.reply_to(message, content)
-    else:
-        bot.reply_to(message, f"Didn't find lectures for given book id")
 
 @bot.message_handler(func=lambda message: message.text.startswith('/audio'))
 def handle_audio(message):
@@ -57,7 +48,7 @@ def get_lectures_for_book(message):
 def send_paginated_content(chat_id, lecture_id, page, message_id=None):
     content, total_pages = generate_audio_page(lecture_id, page)
     if content:
-        markup = create_pagination_keyboard(lecture_id, page, total_pages)
+        markup = create_lectures_pagination_keyboard(lecture_id, page, total_pages)
         if message_id:
             bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=content, reply_markup=markup)
         else:
@@ -66,7 +57,7 @@ def send_paginated_content(chat_id, lecture_id, page, message_id=None):
     else:
         bot.send_message(chat_id, "Didn't find audios for the given lecture")
 
-def create_pagination_keyboard(lecture_id, current_page, total_pages):
+def create_lectures_pagination_keyboard(lecture_id, current_page, total_pages):
     markup = InlineKeyboardMarkup()
     buttons = []
 
@@ -86,5 +77,44 @@ def callback_query(call):
     send_paginated_content(call.message.chat.id, lecture_id, page, call.message.message_id)
     bot.answer_callback_query(call.id)
 
+def keyboard_prev_next(book_id, current_page, total_pages, buttons, current_page_type):
+    if current_page > 1:
+        buttons.append(InlineKeyboardButton("Previous", callback_data=f"{current_page_type}_page_{book_id}_{current_page-1}"))
+    
+    if current_page < total_pages:
+        buttons.append(InlineKeyboardButton("Next", callback_data=f"{current_page_type}_page_{book_id}_{current_page-1}"))
+    return buttons
+
+@bot.message_handler(func=lambda message: message.text.startswith('/book'))
+def get_lectures_for_book(message):
+    book_id = message.text[5:]  # Extract the audio ID from the command
+    content  = generate_lectures_page(book_id)
+    page = 1
+
+    if content:
+        # bot.reply_to(message, content, reply_markup=create_book_pagination_keyboard(book_id, page, total_pages, 'kursbook'))
+        bot.reply_to(message, content)
+    else:
+        bot.reply_to(message, f"Didn't find lectures for given book id")
+
+def create_book_pagination_keyboard(book_id, current_page, total_pages, current_page_type):
+    markup = InlineKeyboardMarkup()
+    buttons = []
+
+    if current_page_type == "workbook":
+        markup.row(InlineKeyboardButton("Kursbook Lectures", callback_data=f"switch_{current_page_type}_book_page_{book_id}_{current_page-1}"))
+    else:
+        markup.row(InlineKeyboardButton("Workbook Lectures", callback_data=f"switch_{current_page_type}_book_page_{book_id}_{current_page-1}"))
+
+    if current_page > 1:
+        buttons.append(InlineKeyboardButton("Previous", callback_data=f"{current_page_type}_page_{book_id}_{current_page-1}"))
+    
+    if current_page < total_pages:
+        buttons.append(InlineKeyboardButton("Next", callback_data=f"{current_page_type}_page_{book_id}_{current_page-1}"))
+
+
+    
+    markup.row(*buttons)
+    return markup
 
 bot.polling()
