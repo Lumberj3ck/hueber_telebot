@@ -96,6 +96,6 @@ def process_files(directory, book_name, db_path):
 
     conn.close()
 
-book_directory = 'Schritte_plus_neu_a1.1'
+book_directory = 'Schritte_plus_neu_2_a2.2'
 path_to_files = os.path.join('audio_files', book_directory)
 process_files(path_to_files, book_directory, 'hueber_media.db')

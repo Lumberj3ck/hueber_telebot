@@ -4,3 +4,6 @@ audio_files
 **/__pycache__/
 
 .env
+
+hueber_media.db
+
