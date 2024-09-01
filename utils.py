@@ -47,7 +47,7 @@ def generate_audio_page(lecture_id, page):
         page_audios = audios[start_idx:end_idx]
 
         book_type = "Workbook" if audios[0][7] == 'workbook' else "Kursbook"
-        content = f'{book_type} lecture {audios[0][6]} from {audios[0][3]} (Page {page}/{total_pages})\n\n'
+        content = f'{book_type} lecture {audios[0][6]} from {audios[0][3].replace("_", " ")} (Page {page}/{total_pages})\n\n'
         for audio in page_audios:
             content += f"{audio[5]}\nListen audio: /audio{audio[0]}\n\n"
         return content, total_pages
