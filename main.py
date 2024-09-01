@@ -146,4 +146,6 @@ def create_book_pagination_keyboard(book_id, current_page, total_pages, current_
     markup.row(*buttons)
     return markup
 
-bot.polling()
+if __name__ == "__main__":
+    print("started long polling")
+    bot.polling(non_stop=True)
