@@ -7,10 +7,10 @@ ITEMS_PER_PAGE = 5
 db_name = os.getenv('DB')
 
 def generate_books_page():
-    content = ''
+    content = 'Books available:\n'
     books = sql_queries.get_all_books(db_name)
     for book in books:
-        content += f'{book[0]}  {book[1]} \n /book{book[0]} \n'
+        content += f'{book[0]}.  {book[1].replace("_", " ")} \nLectures from book:  /book{book[0]} \n\n'
     return content
 
 def generate_lectures_page(book_id, page, current_page_type):
@@ -31,7 +31,7 @@ def generate_lectures_page(book_id, page, current_page_type):
             # if first_workbook and lecture[3] == "workbook":
             #     content += "Workbook Lectures \n\n" 
             #     first_workbook = False
-            content += f"Lecture 0{lecture[1]} \n /lecture{lecture[0]} \n\n"
+            content += f"Lecture 0{lecture[1]} \nAudio from lecture: /lecture{lecture[0]} \n\n"
         return content, total_pages
     else:
         return None, 0
@@ -49,7 +49,7 @@ def generate_audio_page(lecture_id, page):
         book_type = "Workbook" if audios[0][7] == 'workbook' else "Kursbook"
         content = f'{book_type} lecture {audios[0][6]} from {audios[0][3]} (Page {page}/{total_pages})\n\n'
         for audio in page_audios:
-            content += f"{audio[5]}\n/audio{audio[0]}\n\n"
+            content += f"{audio[5]}\nListen audio: /audio{audio[0]}\n\n"
         return content, total_pages
     else:
         return None, 0
